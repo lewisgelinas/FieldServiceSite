@@ -300,6 +300,26 @@ function new_ctrl_form(controller_name)
     return $form; 
 }
 
+// ninjaed from: https://stackoverflow.com/a/901144
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+function load_form_data(data) {
+    for (var i = 0; i < data.workstation.length; i++) {
+        var workstation =  data.workstation[i];
+        var $form = new_workstation_form(workstation.name);
+        $('#content').append($form);
+
+    }
+}
+
 function get_form_data() 
 { 
     var data = {workstation: []}; 
@@ -371,8 +391,6 @@ $(document).ready(function() {
             $('#content').append($form);
             $(this).val('');
         });
-
-
     //-- controllers --------------------
         for (var ct in controllerTypes) { 
             $("#add-controller-options").append(
@@ -385,5 +403,24 @@ $(document).ready(function() {
             $('#content').append($form); 
             $(this).val(''); 
         }); 
+
+
+//call to load form Data into form fields         
+var id = getParameterByName('id');
+if (id) {
+$.ajax({
+    url: '/viewdata',
+    type: "GET",
+    dataType: "json",
+    data: {'id': id},
+    contentType: "application/json",
+    success: function(data) 
+    {
+        console.log(data);
+        load_form_data(data);
+    }
+});
+}
+
 
 }) 

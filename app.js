@@ -6,11 +6,11 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var submitRouter = require('./routes/submit')
+var submitRouter = require('./routes/submit'); 
+var viewdataRouter = require('./routes/viewdata'); 
+var viewcollectionsRouter = require('./routes/viewcollections'); 
 
 var app = express();
-
-
 
 //START SERVER WITH NPM START------------
 
@@ -26,9 +26,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/submit', submitRouter)
-
-
+app.use('/submit', submitRouter);
+app.use('/viewdata', viewdataRouter);
+app.use('/viewcollections', viewcollectionsRouter);
 
 
 // catch 404 and forward to error handler
