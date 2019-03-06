@@ -315,7 +315,26 @@ function load_form_data(data) {
     for (var i = 0; i < data.workstation.length; i++) {
         var workstation =  data.workstation[i];
         var $form = new_workstation_form(workstation.name);
-        $('#content').append($form);
+
+        console.log(data.workstation[i]);
+        
+        $.each(workstation.input, function(key, value){ 
+            console.log(key + ':' + value )
+        })
+
+        for (var key in workstation) {  
+            if (workstation.hasOwnProperty(key)){ 
+            $('#content').append($form); 
+            $('.workstation-form').each(function (i,e){
+                console.log(workstation[key])
+
+                    $(e).find('input').each(function(i,e2) {
+                        $(e2).val(workstation[key]) 
+                        
+                    })
+                }) 
+            }
+        }
 
     }
 }

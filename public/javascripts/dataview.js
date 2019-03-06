@@ -22,13 +22,17 @@ $(document).ready(function() {
     });
     
     $('#container').on("click","button", function(event) {
-        var url = window.location.href; 
-        if (url.indexOf('?') > -1 ){ 
+        //var url = window.location.href; 
+        var url = "pmreport.html"; 
+        if (url.indexOf('?') > -1 ){
             url += '?id=' +  event.target.id
-        } else { 
+        } 
+        else { 
             url +='?id=' +  event.target.id
         }
         console.log(url)
+        window.location.href = url;
+        console.log(url);  
     })
     
 
