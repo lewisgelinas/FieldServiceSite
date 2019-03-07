@@ -315,27 +315,26 @@ function load_form_data(data) {
     for (var i = 0; i < data.workstation.length; i++) {
         var workstation =  data.workstation[i];
         var $form = new_workstation_form(workstation.name);
-
         console.log(data.workstation[i]);
-        
-        $.each(workstation.input, function(key, value){ 
-            console.log(key + ':' + value )
-        })
+        var inputSelector = workstation.input; 
 
-        for (var key in workstation) {  
-            if (workstation.hasOwnProperty(key)){ 
-            $('#content').append($form); 
-            $('.workstation-form').each(function (i,e){
-                console.log(workstation[key])
+        $('#content').append($form); 
 
-                    $(e).find('input').each(function(i,e2) {
-                        $(e2).val(workstation[key]) 
-                        
-                    })
-                }) 
+        for (var key in inputSelector){ 
+            if (inputSelector.hasOwnProperty(key)) { 
+                console.log(key +  "-> " + inputSelector[key])
             }
-        }
 
+            $('.workstation-form').each(function (i,e){  
+                console.log(e);  
+                    $(e).find('input').each(function(i,e2) {
+                        console.log(key); 
+                        if ($(e2).attr("verfication-name") == key){
+                            $(e2).val(inputSelector[key]) 
+                        }
+                    })
+            }) 
+        }
     }
 }
 
