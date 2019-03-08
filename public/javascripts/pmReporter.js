@@ -1,5 +1,5 @@
 
-//General Information for Report Header
+// OBJECT DEFINITION FOR REPORT HEADER  - SYSTEM INFORMATION
 var servicesHeading = { 
     "Customer Information" : {
         id:"customerinformation",   
@@ -17,7 +17,6 @@ var servicesHeading = {
             {name: "System Version", type: "text", id:'systemVersion'}, 
             {name: "System Description", type: "text", id:'systemDescription'}, 
             {name: "AMS ID", type: "text", id:'amsID'}, 
-            {name: "AMS Version", type: "text", id:'amsVersion'}, 
         ],
     }, 
 
@@ -32,10 +31,7 @@ var servicesHeading = {
     }
 }
 
-//--Workstations---------------------
-// text = adds text input field
-// choice = adds choice option
-
+//OBJECT INFORMATION FOR WORKSTATIONS 
 var workstationInformation = [ 
     {title: "Workstaion Information", type:'text'}, 
     {name: "Node Name", type:"text"},
@@ -65,7 +61,13 @@ var DeltaVDiagnostics = [
 
 ]
 
-var allDiagnostics = [].concat(workstationInformation).concat(WindowsDiagnostics).concat(DeltaVDiagnostics);
+var allDiagnostics = []
+    .concat(workstationInformation)
+    .concat(WindowsDiagnostics)
+    .concat(DeltaVDiagnostics);
+
+
+//WORKSTATION TYPES
 var workstationTypes = { 
     "ProPlus" : { 
         verifications: allDiagnostics, 
@@ -115,7 +117,7 @@ var workstationTypes = {
 
 }
 
-//--controllers------------------
+//OBJECT INFORMATION FOR CONTROLLERS 
 var controllerInformation = [ 
     {title:"Controller Information", type:"text"},
     {name:"CTRL Name: ", type:"text"}, 
@@ -149,7 +151,14 @@ var controllerActivities = [
     {name:"Verify the I/O Cards LED Status", type:"text"}, 
     {name:"Verify the panle ventilation", type:"text"}, 
 ]
-var controllerAll = [].concat(controllerInformation).concat(controllerDiagnostics).concat(controllerFirmware).concat(controllerActivities);
+var controllerAll = []
+    .concat(controllerInformation)
+    .concat(controllerDiagnostics)
+    .concat(controllerFirmware)
+    .concat(controllerActivities);
+
+
+//CONTROLLER TYPES
 var controllerTypes = {
     "S - Series " : { 
         verifications : controllerAll,  
@@ -172,55 +181,66 @@ var controllerTypes = {
 
 };
 
+
+
+
+
+//GENERATES THE DOM FOR GENERAL SYSTEM INFORMATION
 function newReportHeader(){ 
     var $formheader = $('<div/>').attr('id', 'reportHeading').addClass('form-group'); 
-    for(var sectionSelector in servicesHeading) 
+    for(var object in servicesHeading) 
     { 
-        var section = servicesHeading[sectionSelector];
         var $headerSection = $('<div/>').addClass('container'); 
-        $headerSection.append($("<div/>").attr('id', section.id).append($("<strong/>").text(sectionSelector))); 
 
-        for (var i = 0; i < section.inputs.length; i++) 
-        { 
-            $headerSection.append(
-                $('<div>').addClass('row input-group')
-                    .append($('<div/>').append(section.inputs[i].name).addClass('input-group-text col-sm'))
-                    .append($('<div/>').addClass('col').append($("<input/>").attr("type", section.inputs[i].type).addClass('col form-control')))); 
-        } 
-            $formheader.append($headerSection); 
+        //Adding Service Heading Section Title (OBJECT)
+        $headerSection.append($("<div/>").addClass('panel panel-default').attr('id', servicesHeading[object].id).text(object)); 
+
+        //Appending the Object information
+        for (var i = 0; i < servicesHeading[object].inputs.length; i++) { 
+            $headerSection.append($('<div>').addClass('panel-body')
+                .append($('<div/>').append($("<input/>")
+                .attr("type", servicesHeading[object].inputs[i].type)
+                .attr("placeholder",servicesHeading[object].inputs[i].name)
+                .addClass("form-control"))))
+        }
+
+        $formheader.append($headerSection); 
     }
 
+    $formheader.append('<hr>')
     $('#content').prepend($formheader); 
     $('#addHeaderButton').remove(); 
 }
 
 
+
+
+
+
+
 function new_workstation_form(workstation_name)
 { 
-    var $form = $('<div/>').addClass('form-group workstation-form').attr('workstation-Name', workstation_name); 
     var workstation = workstationTypes[workstation_name]; 
+    var $form = $('<div/>').addClass('form-group workstation-form').attr('workstation-Name', workstation_name); 
 
-    if (!workstationTypes[workstation_name])
-    { 
+    if (!workstationTypes[workstation_name]) { 
         alert('Invalid Workstation Selection'); 
         return; 
     }
 
-    var $formTable = $('<table/>').addClass('table container').attr("id", "workstationFormTitle");
+    //Appending workstation title for current form
+    $form.append($('<div/>').text(workstation_name).attr('id', "workstation-form-title"))
 
-
-    $($formTable).append($('<div/>').text(workstation_name)); 
-    
-    var workstation = workstationTypes[workstation_name]; 
+    var $formSection = $('<div/>').addClass('panel panel-default container')
 
     for (var i = 0; i < workstation.verifications.length; i++)
     { 
         var verfication = workstation.verifications[i];  
 
-        //defining the input field based on object "type" (See object def): 
+        //HOW TO APPEND BASED ON THE INPUT TYPE
         if (verfication.type == 'text')
         {
-            var $input = $('<input/>').attr('type', verfication.type).attr('verfication-name', verfication.name).addClass('col form-control'); 
+            var $input = $('<input/>').attr('type', verfication.type).attr('placeholder', verfication.name).addClass('form-control'); 
         } 
 
         else if (verfication.type == 'choice')
@@ -236,7 +256,7 @@ function new_workstation_form(workstation_name)
         //defing what to append basec on object name, either a seciton title or input row
         if (verfication['title']) 
         { 
-            $formTable.append(
+            $formSection.append(
                 $('<div/>').text(verfication['title']).attr("id", 'workstationFormSectionHeader')
             ); 
 
@@ -244,18 +264,87 @@ function new_workstation_form(workstation_name)
         
         else if(!verfication['title'])
         {
-            $formTable.append(
-                $('<div/>').addClass('row input-group').append($('<div/>').addClass('input-group-text col-sm-3').text(verfication.name))
-                    .append($('<div/>').append($input).addClass('col'))); 
+            $formSection.append(
+                $('<div/>')
+                .addClass('row input-group form-control')
+                .append($('<div/>')
+                .append($input))); 
         }
     }
 
-    $form.append($formTable); 
+    $form.append($formSection); 
     $form.append('<hr>')
 
     return $form; 
 }
 
+
+//CREATES THE DYNAMIC FORMS FOR EACH SELECTED WORKSTATION TYPES
+// function new_workstation_form(workstation_name)
+// { 
+//     var $form = $('<div/>').addClass('form-group workstation-form').attr('workstation-Name', workstation_name); 
+//     var workstation = workstationTypes[workstation_name]; 
+
+//     if (!workstationTypes[workstation_name])
+//     { 
+//         alert('Invalid Workstation Selection'); 
+//         return; 
+//     }
+
+//     var $formTable = $('<table/>').addClass('table container').attr("id", "workstationFormTitle");
+
+
+//     $($formTable).append($('<div/>').text(workstation_name)); 
+    
+//     var workstation = workstationTypes[workstation_name]; 
+
+//     for (var i = 0; i < workstation.verifications.length; i++)
+//     { 
+//         var verfication = workstation.verifications[i];  
+
+//         //defining the input field based on object "type" (See object def): 
+//         if (verfication.type == 'text')
+//         {
+//             var $input = $('<input/>').attr('type', verfication.type).attr('verfication-name', verfication.name).addClass('col form-control'); 
+//         } 
+
+//         else if (verfication.type == 'choice')
+//         {
+//             var $input = $('<select/>').addClass('form-control')
+//                     .append($('<option/>').text('Good').attr("value", "Good").attr('verfication-name', verfication.name))
+//                     .append($('<option/>').text('N/A').attr("value", "N/A").attr('verfication-name', verfication.name))
+//                     .append($('<option/>').text('Bad').attr("value", "Bad").attr('verfication-name', verfication.name))
+//         }
+        
+
+
+//         //defing what to append basec on object name, either a seciton title or input row
+//         if (verfication['title']) 
+//         { 
+//             $formTable.append(
+//                 $('<div/>').text(verfication['title']).attr("id", 'workstationFormSectionHeader')
+//             ); 
+
+//         }
+        
+//         else if(!verfication['title'])
+//         {
+//             $formTable.append(
+//                 $('<div/>').addClass('row input-group').append($('<div/>').addClass('input-group-text col-sm-3').text(verfication.name))
+//                     .append($('<div/>').append($input).addClass('col'))); 
+//         }
+//     }
+
+//     $form.append($formTable); 
+//     $form.append('<hr>')
+
+//     return $form; 
+// }
+
+
+
+
+//CREATES THE DYNAMIC FORM FOR EACH CONTROLLER TYPE SELECTED
 function new_ctrl_form(controller_name) 
 { 
     var $form = $('<div/>').addClass('form-group').text(controller_name); 
@@ -300,6 +389,10 @@ function new_ctrl_form(controller_name)
     return $form; 
 }
 
+
+
+
+//REGEX FOR VARAIABLE ASSIGNEMENT FOR LOADING THE ID OF THE DATABASE OBJECT
 // ninjaed from: https://stackoverflow.com/a/901144
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -311,33 +404,51 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+
+
+
+// FOR FILLING OUT THE FORM FIELDS WHEN PAGE LOADS WIHT DATABASE DOCUMENT ID IS ADDED TO THE URL
 function load_form_data(data) {
     for (var i = 0; i < data.workstation.length; i++) {
         var workstation =  data.workstation[i];
         var $form = new_workstation_form(workstation.name);
-        console.log(data.workstation[i]);
+        //console.log(data.workstation[i]);
         var inputSelector = workstation.input; 
-
         $('#content').append($form); 
-
+    
         for (var key in inputSelector){ 
             if (inputSelector.hasOwnProperty(key)) { 
-                console.log(key +  "-> " + inputSelector[key])
+                //console.log(key +  "-> " + inputSelector[key])
             }
 
-            $('.workstation-form').each(function (i,e){  
-                console.log(e);  
-                    $(e).find('input').each(function(i,e2) {
-                        console.log(key); 
+            $form.each(function (i,e){  
+                //console.log(e);  
+                    $(e).find('input').each(function(i,e2) {                       
                         if ($(e2).attr("verfication-name") == key){
-                            $(e2).val(inputSelector[key]) 
-                        }
+                            console.log(inputSelector[key]); 
+                            console.log($(e2).attr('value', inputSelector[key]))
+
+                        }  
                     })
             }) 
         }
     }
 }
 
+
+// CLEARING FORM FIEDS AFTER THE SUBMIT BUTTON IS PRESSED
+function clearformfields(){ 
+    $('.workstation-form').each(function(i,e){ 
+        $(e).find('input').each(function(i,e2){
+            $(e2).attr('value', "")
+        })
+    
+    })
+}
+
+
+
+// SCRAPPING THE DATA FROM THE PAGE WHEN SUBMIT BUTTON IS PRESSED
 function get_form_data() 
 { 
     var data = {workstation: []}; 
@@ -365,11 +476,9 @@ function get_form_data()
             }
 
             workstation.input[$(e2).attr('verfication-name')] = $(e2).val();
-        })
-            
+        })           
         
-        
-
+    
         data.workstation.push(workstation); 
         //data.controllers.push(controller); 
 
@@ -379,26 +488,34 @@ function get_form_data()
 }
 
 
+
+
+//ON READ LOAD ITEMS 
 $(document).ready(function() { 
+
+    //EVENT LISTNERS
+    $('#headerButton').click(newReportHeader); 
 
     $('#saveButton').click(function() {
         var data = JSON.stringify(get_form_data());
-        console.log(get_form_data());
         var serviceURL = "/submit"
-
         $.ajax({
             url: serviceURL,
             type: "POST",
             dataType: "json",
             data: data,
-            contentType: "application/json"
-        });
+            contentType: "application/json", 
+            success: function() 
+            { 
+                alert("Document Submitted"); 
+                clearformfields(); 
+                window.location.href = '../index.html'
+            }
 
+        });
     })
 
-    $('#headerButton').click(newReportHeader); 
-
-    //-- workstations -------------------
+    //LOADS THE WORKSTATION TYPES INTO THE DROPDOWN MENU
         for (var wt in workstationTypes) {
             $('#add-workstation-options').append(
                 $("<option/>").attr("value", wt).text(wt));
@@ -409,7 +526,7 @@ $(document).ready(function() {
             $('#content').append($form);
             $(this).val('');
         });
-    //-- controllers --------------------
+    //LOADS THE CONTROLLER TYPES INTO THE DROP DOWN MENU
         for (var ct in controllerTypes) { 
             $("#add-controller-options").append(
                 $("<option/>").attr("value", ct).text(ct)); 
@@ -423,22 +540,19 @@ $(document).ready(function() {
         }); 
 
 
-//call to load form Data into form fields         
-var id = getParameterByName('id');
-if (id) {
-$.ajax({
-    url: '/viewdata',
-    type: "GET",
-    dataType: "json",
-    data: {'id': id},
-    contentType: "application/json",
-    success: function(data) 
-    {
-        console.log(data);
-        load_form_data(data);
+    //AJAX TO GET THE ID IN THE URL, THEN PASS THE PARAM TO THE LOAD FORM DATA FOR PAGE RENDERING EXSISITNG DATABASE ENTRIES       
+    var id = getParameterByName('id');
+    if (id){
+        $.ajax({
+            url: '/viewdata',
+            type: "GET",
+            dataType: "json",
+            data: {'id': id},
+            contentType: "application/json",
+            success: function(data) 
+            {   
+            load_form_data(data);
+            }
+        });
     }
-    });
-}
-
-
 }) 

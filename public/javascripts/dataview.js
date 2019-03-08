@@ -30,11 +30,6 @@ $(document).ready(function() {
         else { 
             url +='?id=' +  event.target.id
         }
-        console.log(url)
         window.location.href = url;
-        console.log(url);  
     })
-    
-
-
 });
