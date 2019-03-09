@@ -184,7 +184,6 @@ var controllerTypes = {
 
 
 
-
 //GENERATES THE DOM FOR GENERAL SYSTEM INFORMATION
 function newReportHeader(){ 
     var $formheader = $('<div/>').attr('id', 'reportHeading').addClass('form-group'); 
@@ -215,9 +214,6 @@ function newReportHeader(){
 
 
 
-
-
-
 function new_workstation_form(workstation_name)
 { 
     var workstation = workstationTypes[workstation_name]; 
@@ -240,24 +236,24 @@ function new_workstation_form(workstation_name)
         //HOW TO APPEND BASED ON THE INPUT TYPE
         if (verfication.type == 'text')
         {
-            var $input = $('<input/>').attr('type', verfication.type).attr('placeholder', verfication.name).addClass('form-control'); 
+            var $input = $('<input/>').attr('type', verfication.type).attr('placeholder', verfication.name).attr("verfication-name", verfication.name).addClass('form-control mb-1'); 
         } 
 
         else if (verfication.type == 'choice')
         {
-            var $input = $('<select/>').addClass('form-control')
+            var $input = $('<div/>').addClass('row mr-1')
+                .append($('<div/>').addClass('col-md-2').text(verfication.name))
+                .append($('<select/>').addClass('form-control mb-1 col ml-1')
                     .append($('<option/>').text('Good').attr("value", "Good").attr('verfication-name', verfication.name))
                     .append($('<option/>').text('N/A').attr("value", "N/A").attr('verfication-name', verfication.name))
-                    .append($('<option/>').text('Bad').attr("value", "Bad").attr('verfication-name', verfication.name))
+                    .append($('<option/>').text('Bad').attr("value", "Bad").attr('verfication-name', verfication.name)))
         }
         
-
-
         //defing what to append basec on object name, either a seciton title or input row
         if (verfication['title']) 
         { 
             $formSection.append(
-                $('<div/>').text(verfication['title']).attr("id", 'workstationFormSectionHeader')
+                $('<div/>').addClass('mb-1').text(verfication['title']).attr("id", 'workstationFormSectionHeader')
             ); 
 
         }
@@ -266,9 +262,9 @@ function new_workstation_form(workstation_name)
         {
             $formSection.append(
                 $('<div/>')
-                .addClass('row input-group form-control')
-                .append($('<div/>')
-                .append($input))); 
+                .addClass('panen-body')
+                //.append($('<div/>')
+                .append($input)); 
         }
     }
 
@@ -277,70 +273,6 @@ function new_workstation_form(workstation_name)
 
     return $form; 
 }
-
-
-//CREATES THE DYNAMIC FORMS FOR EACH SELECTED WORKSTATION TYPES
-// function new_workstation_form(workstation_name)
-// { 
-//     var $form = $('<div/>').addClass('form-group workstation-form').attr('workstation-Name', workstation_name); 
-//     var workstation = workstationTypes[workstation_name]; 
-
-//     if (!workstationTypes[workstation_name])
-//     { 
-//         alert('Invalid Workstation Selection'); 
-//         return; 
-//     }
-
-//     var $formTable = $('<table/>').addClass('table container').attr("id", "workstationFormTitle");
-
-
-//     $($formTable).append($('<div/>').text(workstation_name)); 
-    
-//     var workstation = workstationTypes[workstation_name]; 
-
-//     for (var i = 0; i < workstation.verifications.length; i++)
-//     { 
-//         var verfication = workstation.verifications[i];  
-
-//         //defining the input field based on object "type" (See object def): 
-//         if (verfication.type == 'text')
-//         {
-//             var $input = $('<input/>').attr('type', verfication.type).attr('verfication-name', verfication.name).addClass('col form-control'); 
-//         } 
-
-//         else if (verfication.type == 'choice')
-//         {
-//             var $input = $('<select/>').addClass('form-control')
-//                     .append($('<option/>').text('Good').attr("value", "Good").attr('verfication-name', verfication.name))
-//                     .append($('<option/>').text('N/A').attr("value", "N/A").attr('verfication-name', verfication.name))
-//                     .append($('<option/>').text('Bad').attr("value", "Bad").attr('verfication-name', verfication.name))
-//         }
-        
-
-
-//         //defing what to append basec on object name, either a seciton title or input row
-//         if (verfication['title']) 
-//         { 
-//             $formTable.append(
-//                 $('<div/>').text(verfication['title']).attr("id", 'workstationFormSectionHeader')
-//             ); 
-
-//         }
-        
-//         else if(!verfication['title'])
-//         {
-//             $formTable.append(
-//                 $('<div/>').addClass('row input-group').append($('<div/>').addClass('input-group-text col-sm-3').text(verfication.name))
-//                     .append($('<div/>').append($input).addClass('col'))); 
-//         }
-//     }
-
-//     $form.append($formTable); 
-//     $form.append('<hr>')
-
-//     return $form; 
-// }
-
 
 
 
@@ -360,28 +292,21 @@ function new_ctrl_form(controller_name)
 
     $container = $('<div>').addClass('test')
 
-
-    for (var i = 0; i < controller.verifications.length; i++)
-    { 
+    for (var i = 0; i < controller.verifications.length; i++){ 
         var verfication = controller.verifications[i]
         var $input = $('<input/>').attr('type', verfication.type).attr('verfication-name', verfication.name).addClass('col form-control'); 
 
-
-        if (verfication['title']) 
-        {
+        if (verfication['title']){
             $formTable.append(
-                $('<div/>').text(verfication['title']).attr("id", "controllerFormSectionHeader")
-            )
+                $('<div/>').text(verfication['title']).attr("id", "controllerFormSectionHeader"))
         }
 
-        else if (!verfication['title'])
-        {
+        else {
             $formTable.append(
                 $('<div/>').addClass('row input-group')
                     .append($('<div/>').addClass('input-group-text col-sm-4').text(verfication.name))
                     .append($('<div/>').append($input).addClass(''))); 
-        }
-        
+        }        
     }
 
     $form.append($formTable); 
@@ -390,10 +315,7 @@ function new_ctrl_form(controller_name)
 }
 
 
-
-
-//REGEX FOR VARAIABLE ASSIGNEMENT FOR LOADING THE ID OF THE DATABASE OBJECT
-// ninjaed from: https://stackoverflow.com/a/901144
+//REGEX FOR VARAIABLE ASSIGNEMENT FOR LOADING THE ID OF THE DATABASE OBJECT -- ninjaed from: https://stackoverflow.com/a/901144
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -418,11 +340,11 @@ function load_form_data(data) {
     
         for (var key in inputSelector){ 
             if (inputSelector.hasOwnProperty(key)) { 
-                //console.log(key +  "-> " + inputSelector[key])
+                console.log(key +  "-> " + inputSelector[key])
             }
 
             $form.each(function (i,e){  
-                //console.log(e);  
+                console.log(e);  
                     $(e).find('input').each(function(i,e2) {                       
                         if ($(e2).attr("verfication-name") == key){
                             console.log(inputSelector[key]); 
