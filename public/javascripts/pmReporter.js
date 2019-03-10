@@ -186,7 +186,7 @@ var controllerTypes = {
 
 //GENERATES THE DOM FOR GENERAL SYSTEM INFORMATION
 function newReportHeader(){ 
-    var $formheader = $('<div/>').attr('id', 'reportHeading').addClass('form-group'); 
+    var $formheader = $('<div/>').attr('id', 'reportHeading').addClass('form-group reportHeading'); 
     for(var object in servicesHeading) 
     { 
         var $headerSection = $('<div/>').addClass('container'); 
@@ -364,16 +364,18 @@ function clearformfields(){
         $(e).find('input').each(function(i,e2){
             $(e2).attr('value', "")
         })
-    
     })
 }
-
 
 
 // SCRAPPING THE DATA FROM THE PAGE WHEN SUBMIT BUTTON IS PRESSED
 function get_form_data() 
 { 
-    var data = {workstation: []}; 
+    var data = {
+        reportheading: [],
+        workstations: [], 
+        controllers: []
+    }; 
 
     $('.workstation-form').each(function (i,e) {
         var workstation = { 
@@ -401,11 +403,30 @@ function get_form_data()
         })           
         
     
-        data.workstation.push(workstation); 
-        //data.controllers.push(controller); 
+        data.workstations.push(workstation); 
 
     }); 
 
+    $('.reportHeading').each(function(i,e){ 
+        
+        var headingInformation = { 
+            name: 'Customer Information', 
+            input : {}, 
+        }; 
+    
+        $(e).find('input').each(function(i,e2){
+
+            if ($(e2).val == "") { 
+                return; 
+            }
+
+            headingInformation.input[$(e2).attr('placeholder')] = $(e2).val(); 
+            console.log($(e2).val()); 
+        })
+
+        data.reportheading.push(headingInformation);    
+    }); 
+    
     return data; 
 }
 
@@ -429,6 +450,7 @@ $(document).ready(function() {
             contentType: "application/json", 
             success: function() 
             { 
+                console.log(data); 
                 alert("Document Submitted"); 
                 clearformfields(); 
                 window.location.href = '../index.html'
