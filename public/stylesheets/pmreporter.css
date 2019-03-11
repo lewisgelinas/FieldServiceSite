@@ -44,7 +44,7 @@ hr {
     border-radius: 3px; 
 }
 
-#workstation-form-title{ 
+#workstation-form-title, #controller-form-title{ 
     text-align: center; 
     font-size: xx-large; 
     font: bold; 

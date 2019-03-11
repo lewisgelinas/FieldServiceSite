@@ -213,7 +213,7 @@ function newReportHeader(){
 
 
 
-
+//CREATES THE DYNAMIC FORM FOR THE WORKSTATION TYPES
 function new_workstation_form(workstation_name)
 { 
     var workstation = workstationTypes[workstation_name]; 
@@ -279,7 +279,8 @@ function new_workstation_form(workstation_name)
 //CREATES THE DYNAMIC FORM FOR EACH CONTROLLER TYPE SELECTED
 function new_ctrl_form(controller_name) 
 { 
-    var $form = $('<div/>').addClass('form-group').text(controller_name); 
+    var controller = controllerTypes[controller_name]; 
+    var $form = $('<div/>').addClass('form-group controller-form').attr("controller-Name", controller_name);  
     
     if (!controllerTypes[controller_name]) 
     {
@@ -287,33 +288,52 @@ function new_ctrl_form(controller_name)
         return;
     }
 
-    var $formTable = $('<div/>').addClass('table'); 
-    var controller = controllerTypes[controller_name];
+    $form.append($('<div/>').text(controller_name).attr("id", "controller-form-title")); 
+    var $formSection = $('<div/>').addClass("panel panel-default container"); 
 
-    $container = $('<div>').addClass('test')
 
     for (var i = 0; i < controller.verifications.length; i++){ 
+
         var verfication = controller.verifications[i]
-        var $input = $('<input/>').attr('type', verfication.type).attr('verfication-name', verfication.name).addClass('col form-control'); 
+ 
+        if (verfication.type == 'text')
+        {
+            var $input = $('<input/>').attr('type', verfication.type).attr('placeholder', verfication.name).attr("verfication-name", verfication.name).addClass('form-control mb-1'); 
+        } 
 
-        if (verfication['title']){
-            $formTable.append(
-                $('<div/>').text(verfication['title']).attr("id", "controllerFormSectionHeader"))
+        else if (verfication.type == 'choice')
+        {
+            var $input = $('<div/>').addClass('row mr-1')
+                .append($('<div/>').addClass('col-md-2').text(verfication.name))
+                .append($('<select/>').addClass('form-control mb-1 col ml-1')
+                    .append($('<option/>').text('Good').attr("value", "Good").attr('verfication-name', verfication.name))
+                    .append($('<option/>').text('N/A').attr("value", "N/A").attr('verfication-name', verfication.name))
+                    .append($('<option/>').text('Bad').attr("value", "Bad").attr('verfication-name', verfication.name)))
         }
+        
+        if (verfication['title']) 
+        { 
+            $formSection.append(
+                $('<div/>').addClass('mb-1').text(verfication['title']).attr("id", 'controllerFormSectionHeader')
+            ); 
 
-        else {
-            $formTable.append(
-                $('<div/>').addClass('row input-group')
-                    .append($('<div/>').addClass('input-group-text col-sm-4').text(verfication.name))
-                    .append($('<div/>').append($input).addClass(''))); 
-        }        
+        }
+        
+        else if(!verfication['title'])
+        {
+            $formSection.append(
+                $('<div/>')
+                .addClass('panen-body')
+                //.append($('<div/>')
+                .append($input)); 
+        }
     }
 
-    $form.append($formTable); 
+    $form.append($formSection); 
     $form.append('<hr>')
-    return $form; 
-}
 
+    return $form; 
+}; 
 
 //REGEX FOR VARAIABLE ASSIGNEMENT FOR LOADING THE ID OF THE DATABASE OBJECT -- ninjaed from: https://stackoverflow.com/a/901144
 function getParameterByName(name, url) {
@@ -331,10 +351,39 @@ function getParameterByName(name, url) {
 
 // FOR FILLING OUT THE FORM FIELDS WHEN PAGE LOADS WIHT DATABASE DOCUMENT ID IS ADDED TO THE URL
 function load_form_data(data) {
-    for (var i = 0; i < data.workstation.length; i++) {
-        var workstation =  data.workstation[i];
+
+    //LOAD THE CUSTOMER INFORMATION FORM
+    for (var i = 0; i < data.reportheading.length; i++) {
+        var heading =  data.reportheading[i];
+        var $form = newReportHeader();
+
+        var inputSelector = heading.input; 
+        $('#content').append($form); 
+
+        for (var key in inputSelector){ 
+            if (inputSelector.hasOwnProperty(key)) { 
+                //console.log(key +  "-> " + inputSelector[key])
+            }
+
+            $('.reportHeading').each(function (i,e){   
+                    $(e).find('input').each(function(i,e2) {                       
+                        if ($(e2).attr("placeholder") == key){
+                            //console.log(e2); 
+                            $(e2).attr('value', inputSelector[key])
+                        }  
+                    })
+            }) 
+        }
+
+    }
+
+
+
+    //LOAD THE WORKSTATION INFORMATION FORMS
+    for (var i = 0; i < data.workstations.length; i++) {
+        var workstation =  data.workstations[i];
         var $form = new_workstation_form(workstation.name);
-        //console.log(data.workstation[i]);
+
         var inputSelector = workstation.input; 
         $('#content').append($form); 
     
@@ -346,7 +395,7 @@ function load_form_data(data) {
             $form.each(function (i,e){  
                 console.log(e);  
                     $(e).find('input').each(function(i,e2) {                       
-                        if ($(e2).attr("verfication-name") == key){
+                        if ($(e2).attr("placeholder") == key){
                             console.log(inputSelector[key]); 
                             console.log($(e2).attr('value', inputSelector[key]))
 
@@ -355,6 +404,35 @@ function load_form_data(data) {
             }) 
         }
     }
+
+
+
+    // LOAD THE CONTROLLER WORKSTATION FORMS
+    for (var i = 0; i < data.controllers.length; i++) {
+        var controller =  data.controllers[i];
+        var $form = new_ctrl_form(controller.name);
+
+        var inputSelector = controller.input; 
+        $('#content').append($form); 
+    
+        for (var key in inputSelector){ 
+            if (inputSelector.hasOwnProperty(key)) { 
+                console.log(key +  "-> " + inputSelector[key])
+            }
+
+            $form.each(function (i,e){  
+                console.log(e);  
+                    $(e).find('input').each(function(i,e2) {                       
+                        if ($(e2).attr("placeholder") == key){
+                            console.log(inputSelector[key]); 
+                            console.log($(e2).attr('value', inputSelector[key]))
+
+                        }  
+                    })
+            }) 
+        }
+    }
+
 }
 
 
@@ -372,11 +450,47 @@ function clearformfields(){
 function get_form_data() 
 { 
     var data = {
+        date: "",  
         reportheading: [],
         workstations: [], 
         controllers: []
     }; 
 
+
+//GET SUBMITTED REPORT DATE
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) { dd = '0' + dd;}
+        if (mm < 10) { mm = '0' + mm;}
+        today = mm + '/' + dd + '/' + yyyy;
+        data.date = today;
+
+//GET REPORT HEADING INFORMATION
+    $('.reportHeading').each(function(i,e){ 
+        
+        var headingInformation = { 
+            name: 'Customer Information', 
+            input : {}, 
+        }; 
+    
+        $(e).find('input').each(function(i,e2){
+
+            if ($(e2).val == "") { 
+                return; 
+            }
+
+            headingInformation.input[$(e2).attr('placeholder')] = $(e2).val(); 
+            console.log($(e2).val()); 
+        })
+
+        data.reportheading.push(headingInformation);    
+    }); 
+
+
+
+//GET WORKSTATION INFORMATION
     $('.workstation-form').each(function (i,e) {
         var workstation = { 
             name: $(e).attr('workstation-name'), 
@@ -385,7 +499,7 @@ function get_form_data()
 
         $(e).find('input').each(function(i,e2) { 
             
-            //check for empty
+           
             if ($(e2).val() == "") { 
                 return; 
             }
@@ -407,26 +521,39 @@ function get_form_data()
 
     }); 
 
-    $('.reportHeading').each(function(i,e){ 
-        
-        var headingInformation = { 
-            name: 'Customer Information', 
+
+//GET CONTROLLERS INFORMATION
+    $('.controller-form').each(function (i,e) {
+        var controller = { 
+            name: $(e).attr('controller-name'), 
             input : {}, 
         }; 
-    
-        $(e).find('input').each(function(i,e2){
 
-            if ($(e2).val == "") { 
+        $(e).find('input').each(function(i,e2) { 
+            
+            //check for empty
+            if ($(e2).val() == "") { 
                 return; 
             }
 
-            headingInformation.input[$(e2).attr('placeholder')] = $(e2).val(); 
-            console.log($(e2).val()); 
-        })
+            controller.input[$(e2).attr('verfication-name')] = $(e2).val();
 
-        data.reportheading.push(headingInformation);    
-    }); 
+        }); 
+
+        $(e).find('option:selected').each(function(i,e2){
+            if ($(e2).val() == "") { 
+                return; 
+            }
+
+            controller.input[$(e2).attr('verfication-name')] = $(e2).val();
+        })           
+        
     
+        data.controllers.push(controller); 
+
+    }); 
+
+
     return data; 
 }
 
