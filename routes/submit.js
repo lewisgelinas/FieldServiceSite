@@ -13,6 +13,7 @@ router.post('/', function(req, res, next) {
         dbo.collection("testapp").insertOne(req.body, function(err, res) {
             if (err) throw err;
             console.log("1 document inserted");
+            
             db.close();
         });
 

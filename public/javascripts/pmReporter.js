@@ -582,7 +582,6 @@ $(document).ready(function() {
                 clearformfields(); 
                 window.location.href = '../index.html'
             }
-
         });
     })
 

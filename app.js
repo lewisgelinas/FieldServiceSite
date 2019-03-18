@@ -5,18 +5,18 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var submitRouter = require('./routes/submit'); 
 var viewdataRouter = require('./routes/viewdata'); 
 var viewcollectionsRouter = require('./routes/viewcollections'); 
+var viewJSONRouter = require('./routes/viewJSON')
 
 var app = express();
 
 //START SERVER WITH NPM START------------
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -25,10 +25,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/submit', submitRouter);
 app.use('/viewdata', viewdataRouter);
 app.use('/viewcollections', viewcollectionsRouter);
+app.use ('/viewJSON', viewJSONRouter); 
 
 
 // catch 404 and forward to error handler
