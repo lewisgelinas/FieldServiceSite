@@ -42,23 +42,20 @@ var workstationInformation = [
 ]
 var WindowsDiagnostics = [   
     {title: "Windows Diagnostics", type:'text'},
-    {name: 'Example Choice', type: 'choice'}, 
-    {name: 'Example Choice_2', type: 'choice'}, 
-    {name: 'Example Choice_3', type: 'choice'},  
     {name: "CPU Loading (%)", type: 'text'},
     {name: "Memory Loading (%)", type: 'text'}, 
     {name: "C Drive Free Space", type: "text"},
     {name: "D Drive Free Space", type:"text"}, 
-    {name: "Application Logs", type: "text"},
-    {name: "System Logs", type: "text"}, 
+    {name: 'Network Binding Order', type: 'choice'},
+    {name: "Application Logs", type: "textarea"},
+    {name: "System Logs", type: "textarea"}, 
 ]
 var DeltaVDiagnostics = [ 
     {title:"DeltaV Diagnostics", type:'text'}, 
-    {name:"Diagnostics Errors", type:"text"}, 
-    {name:"TimeInSync = True", type:"text"}, 
-    {name:"Network Communication Integrity", type:"text"}, 
-    {name:"Auto-Update Service", type:"text"}, 
-
+    {name:"Diagnostics Errors", type:"choice"}, 
+    {name:"TimeInSync = True", type:"choice"}, 
+    {name:"Network Communication Integrity", type:"choice"}, 
+    {name:"Auto-Update Service", type:"choice"}, 
 ]
 
 var allDiagnostics = []
@@ -242,11 +239,18 @@ function new_workstation_form(workstation_name)
         else if (verfication.type == 'choice')
         {
             var $input = $('<div/>').addClass('row mr-1')
-                .append($('<div/>').addClass('col-md-2').text(verfication.name))
+                .append($('<div/>').addClass('col-md-3').text(verfication.name))
                 .append($('<select/>').addClass('form-control mb-1 col ml-1')
                     .append($('<option/>').text('Good').attr("value", "Good").attr('verfication-name', verfication.name))
                     .append($('<option/>').text('N/A').attr("value", "N/A").attr('verfication-name', verfication.name))
                     .append($('<option/>').text('Bad').attr("value", "Bad").attr('verfication-name', verfication.name)))
+        }
+
+        else if (verfication.type == 'textarea')
+        {
+            var $input = $('<div/>').addClass('row mr-1')
+                .append($('<label/>').attr("for", verfication.name + "id").text(verfication.name))
+                .append($('<textarea/>').addClass('form-control').attr("id", verfication.name + "id"))
         }
         
         //defing what to append basec on object name, either a seciton title or input row
