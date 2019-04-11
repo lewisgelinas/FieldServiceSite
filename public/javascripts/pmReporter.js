@@ -248,9 +248,9 @@ function new_workstation_form(workstation_name)
 
         else if (verfication.type == 'textarea')
         {
-            var $input = $('<div/>').addClass('row mr-1')
+            var $input = $('<div/>').addClass('row ml-1')
                 .append($('<label/>').attr("for", verfication.name + "id").text(verfication.name))
-                .append($('<textarea/>').addClass('form-control').attr("id", verfication.name + "id"))
+                .append($('<textarea/>').addClass('form-control').attr("id", verfication.name + "id").attr("verfication-name", verfication.name))
         }
         
         //defing what to append basec on object name, either a seciton title or input row
@@ -513,6 +513,14 @@ function get_form_data()
         }); 
 
         $(e).find('option:selected').each(function(i,e2){
+            if ($(e2).val() == "") { 
+                return; 
+            }
+
+            workstation.input[$(e2).attr('verfication-name')] = $(e2).val();
+        })           
+        
+        $(e).find('textarea').each(function(i,e2){
             if ($(e2).val() == "") { 
                 return; 
             }

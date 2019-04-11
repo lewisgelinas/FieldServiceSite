@@ -17,7 +17,15 @@ $(document).ready(function() {
         success: function(data) 
         {       
             for (var i= 0; i < data.length; i++) {
-                var obj = data[i].reportheading[0].input["Company Name"]; 
+                
+                if (data[i].reportheading[0] == null) {
+                    var obj = " "
+                }
+
+                else {
+                    var obj = data[i].reportheading[0].input["Company Name"]; 
+                }
+
                 var objDate = data[i].date; 
                 //$('#data-content').append($(buttonObj).append((JSON.stringify(obj + " Submitted on - " + objDate))).attr("id", data[i]._id).addClass("row mx-3 btn btn-secondary"));  
                 $('#data-content')
